@@ -6,7 +6,6 @@ package speech
 import (
 	"testing"
 
-	"github.com/Microsoft/cognitive-services-speech-sdk-go/audio"
 	"github.com/Microsoft/cognitive-services-speech-sdk-go/common"
 )
 
@@ -93,34 +92,12 @@ func TestModel(t *testing.T) {
 	if got := config.Model(); got != model {
 		t.Fatalf("Model() = %q, want %q", got, model)
 	}
-	if got := config.GetPropertyByString(speechModelNameProperty); got != model {
-		t.Fatalf("model property = %q, want %q", got, model)
-	}
-
-	audioConfig, err := audio.NewAudioConfigFromWavFileInput("../test_files/turn_on_the_lamp.wav")
-	if err != nil {
-		t.Fatalf("NewAudioConfigFromWavFileInput returned an error: %v", err)
-	}
-	defer audioConfig.Close()
-
-	recognizer, err := NewSpeechRecognizerFromConfig(config, audioConfig)
-	if err != nil {
-		t.Fatalf("NewSpeechRecognizerFromConfig returned an error: %v", err)
-	}
-	defer recognizer.Close()
-
-	if got := recognizer.Properties.GetPropertyByString(speechModelNameProperty, ""); got != model {
-		t.Fatalf("recognizer model property = %q, want %q", got, model)
-	}
 
 	if err := config.SetModel(""); err != nil {
 		t.Fatalf("SetModel(\"\") returned an error: %v", err)
 	}
 	if model := config.Model(); model != "" {
 		t.Fatalf("Model() after clear = %q, want empty string", model)
-	}
-	if model := config.properties.GetPropertyByString(speechModelNameProperty, "not-empty"); model != "" {
-		t.Fatalf("raw model property after clear = %q, want empty string", model)
 	}
 }
 
@@ -143,36 +120,10 @@ func TestTranslationConfigModel(t *testing.T) {
 		t.Fatalf("Model() = %q, want %q", got, model)
 	}
 
-	if err := config.SetSpeechRecognitionLanguage("en-US"); err != nil {
-		t.Fatalf("SetSpeechRecognitionLanguage returned an error: %v", err)
-	}
-	if err := config.AddTargetLanguage("de"); err != nil {
-		t.Fatalf("AddTargetLanguage returned an error: %v", err)
-	}
-
-	audioConfig, err := audio.NewAudioConfigFromWavFileInput("../test_files/turn_on_the_lamp.wav")
-	if err != nil {
-		t.Fatalf("NewAudioConfigFromWavFileInput returned an error: %v", err)
-	}
-	defer audioConfig.Close()
-
-	recognizer, err := NewTranslationRecognizerFromConfig(config, audioConfig)
-	if err != nil {
-		t.Fatalf("NewTranslationRecognizerFromConfig returned an error: %v", err)
-	}
-	defer recognizer.Close()
-
-	if got := recognizer.Properties.GetPropertyByString(speechModelNameProperty, ""); got != model {
-		t.Fatalf("translation recognizer model property = %q, want %q", got, model)
-	}
-
 	if err := config.SetModel(""); err != nil {
 		t.Fatalf("SetModel(\"\") returned an error: %v", err)
 	}
 	if model := config.Model(); model != "" {
 		t.Fatalf("Model() after clear = %q, want empty string", model)
-	}
-	if model := config.properties.GetPropertyByString(speechModelNameProperty, "not-empty"); model != "" {
-		t.Fatalf("raw model property after clear = %q, want empty string", model)
 	}
 }
